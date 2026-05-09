@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coocle</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --panel-2: #f8f9fa;
+      --border: #dadce0;
+      --text: #202124;
+      --muted: #5f6368;
+      --dim: #80868b;
+      --accent: #1a73e8;
+      --shadow: 0 1px 6px rgba(32, 33, 36, 0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    }
+
+    .topbar {
+      background: #ffffff;
+      min-height: 58vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 18px 20px;
+      width: 100%;
+    }
+
+    .brand-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-align: center;
+      min-height: 42vh;
+    }
+
+    .brand {
+      font-size: 124px;
+      line-height: 0.94;
+      font-weight: 500;
+      letter-spacing: 0.028em;
+      user-select: none;
+      white-space: nowrap;
+      max-width: 100%;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.095em;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .brand span { display: inline-block; }
+    .brand .b1, .brand .b4 { transform: translateY(0.008em); }
+    .brand .b2, .brand .b3, .brand .b6 { transform: translateY(-0.004em); }
+    .brand .b5 { transform: translateY(0.004em); }
+    .brand .b1 { color: #4285f4; }
+    .brand .b2 { color: #ea4335; }
+    .brand .b3 { color: #fbbc05; }
+    .brand .b4 { color: #4285f4; }
+    .brand .b5 { color: #34a853; }
+    .brand .b6 { color: #ea4335; }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      margin-bottom: 0;
+    }
+
+    .search-box {
+      margin-top: -34px;
+      padding: 0;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+
+    .input {
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid #dfe1e5;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+      box-shadow: none;
+    }
+
+    .input:hover,
+    .input:focus {
+      box-shadow: var(--shadow);
+      border-color: rgba(223,225,229,0);
+    }
+
+    .button {
+      border: 1px solid #f8f9fa;
+      border-radius: 4px;
+      padding: 0 18px;
+      height: 36px;
+      background: #f8f9fa;
+      color: #3c4043;
+      font-size: 14px;
+      cursor: pointer;
+      min-width: 86px;
+    }
+
+    .button:hover {
+      border-color: #dadce0;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+      background: #f8f9fa;
+    }
+
+    .results {
+      margin-top: 24px;
+      display: none;
+      max-width: 860px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .results.active { display: block; }
+
+    .result-count {
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      padding-left: 4px;
+    }
+
+    .result-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .result {
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: box-shadow 0.15s ease, border-color 0.15s ease;
+      box-shadow: none;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: #fff;
+    }
+
+    .result:hover {
+      box-shadow: 0 1px 3px rgba(60,64,67,0.18);
+      border-color: #d2d6dc;
+    }
+
+    .result-url {
+      color: #188038;
+      font-size: 13px;
+      margin-bottom: 4px;
+      line-height: 1.4;
+      word-break: break-all;
+    }
+
+    .result-title {
+      font-size: 20px;
+      font-weight: 400;
+      color: #1a0dab;
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+
+    .result-body {
+      color: #4d5156;
+      font-size: 14px;
+      line-height: 1.72;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      white-space: pre-line;
+    }
+
+    .meta {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .empty {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(32,33,36,.94);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 50;
+      max-width: calc(100% - 24px);
+      text-align: center;
+    }
+
+    .toast.active {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 860px) {
+      .topbar { min-height: 48vh; }
+      .brand-row { gap: 8px; min-height: 34vh; padding: 0 8px; }
+      .brand {
+        font-size: clamp(60px, 18vw, 88px);
+        letter-spacing: 0.024em;
+        gap: 0.085em;
+      }
+      .search-box { margin-top: -12px; max-width: 100%; }
+      .search-row { flex-wrap: wrap; justify-content: center; }
+      .input {
+        flex-basis: 100%;
+        width: 100%;
+        font-size: 16px;
+      }
+      .button { min-width: 120px; }
+      .results { max-width: 100%; }
+      .result { padding: 15px 16px; }
+      .result-title { font-size: 19px; }
+    }
+
+    @media (max-width: 480px) {
+      .wrap { padding: 14px 12px; }
+      .topbar { min-height: 44vh; }
+      .brand-row { min-height: 30vh; gap: 6px; }
+      .brand {
+        font-size: clamp(52px, 16.5vw, 70px);
+        letter-spacing: 0.02em;
+        gap: 0.075em;
+      }
+      .eyebrow {
+        font-size: 10px;
+        letter-spacing: 0.16em;
+      }
+      .search-box { margin-top: -6px; }
+      .input {
+        height: 44px;
+        padding: 0 16px;
+      }
+      .button {
+        height: 36px;
+        min-width: 112px;
+      }
+      .result-count {
+        padding-left: 2px;
+        font-size: 12px;
+      }
+      .result {
+        padding: 14px 14px;
+        border-radius: 8px;
+      }
+      .result-url { font-size: 12px; }
+      .result-title {
+        font-size: 18px;
+        line-height: 1.32;
+      }
+      .result-body {
+        font-size: 13px;
+        line-height: 1.65;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <div class="brand-row">
+        <div class="brand" aria-label="Coocle">
+          <span class="b1">C</span><span class="b2">o</span><span class="b3">o</span><span class="b4">c</span><span class="b5">l</span><span class="b6">e</span>
+        </div>
+        <div class="eyebrow">COOCLE SEARCH</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="search-box">
+      <form id="searchForm" class="search-row">
+        <input id="searchInput" class="input" type="text" autocomplete="off" />
+        <button class="button" type="submit">Coocle 検索</button>
+      </form>
+    </section>
+
+    <section id="results" class="results">
+      <div id="resultCount" class="result-count"></div>
+      <div id="resultList" class="result-list"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast">通過したURLを記録しました</div>
+
+  <script>
+    const VISITED_KEY = 'mogami_arg_visited_sites';
+
+    const SITES = [
+      {
+        id: 'daiba',
+        title: '大馬大学',
+        url: 'https://kasugaobaken-rgb.github.io/Oba-University/',
+        type: '大学公式サイト',
+        description: '大馬大学の公式サイト。大学情報、卒業生向けページ、サークル関連情報などを確認できる。',
+        terms: ['大馬大学','大学','学校','母校','最上','最上清貴','学籍番号','学生証','卒業','文学部','オカルトサークル','サークル','大学時代']
+      },
+      {
+        id: 'kamikakushi',
+        title: '神隠し専門サイト',
+        url: 'https://kasugaobaken-rgb.github.io/laughing-palm-tree/',
+        type: '伝承資料サイト',
+        description: '神隠しに関する伝承や事例をまとめたサイト。サムトの婆、天狗に攫われる話、黄昏時の伝承などを扱う。',
+        terms: ['神隠し','サムト','サムトの婆','天狗','黄昏','黄昏時','行方不明','失踪','消える','梨の木','草履','遠野物語']
+      },
+      {
+        id: 'occult',
+        title: 'オカルトポータルサイト',
+        url: 'https://kasugaobaken-rgb.github.io/occult-portal/',
+        type: 'オカルト総合サイト',
+        description: '都市伝説、異界、別世界、ツキシマなどのオカルト情報を横断的に扱うポータルサイト。',
+        terms: ['オカルト','異界','別世界','異世界','都市伝説','きさらぎ駅','ツキシマ','月島','境界越え','儀式','UFO','呪物','怪異']
+      }
+    ];
+
+    const searchInput = document.getElementById('searchInput');
+    const searchForm = document.getElementById('searchForm');
+    const resultsSection = document.getElementById('results');
+    const resultCount = document.getElementById('resultCount');
+    const resultList = document.getElementById('resultList');
+    const toast = document.getElementById('toast');
+
+    function normalize(text) {
+      return String(text || '')
+        .toLowerCase()
+        .replace(/[\s\u3000]+/g, '')
+        .replace(/[？?！!、。・,\.]/g, '')
+        .trim();
+    }
+
+    function scoreSite(query, site) {
+      const q = normalize(query);
+      if (!q) return 0;
+
+      let score = 0;
+      site.terms.forEach((term) => {
+        const t = normalize(term);
+        if (!t) return;
+        if (q === t) score += 8;
+        else if (q.includes(t)) score += 5;
+        else if (t.includes(q)) score += 3;
+      });
+
+      const title = normalize(site.title);
+      const description = normalize(site.description);
+      if (title.includes(q)) score += 4;
+      if (description.includes(q)) score += 2;
+
+      return score;
+    }
+
+    function findResults(query) {
+      return SITES
+        .map((site) => ({ site, score: scoreSite(query, site) }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map((item) => item.site);
+    }
+
+    function renderResults(query) {
+      const results = findResults(query);
+      resultsSection.classList.add('active');
+      resultCount.textContent = `検索語：${query} / ${results.length}件`;
+      resultList.innerHTML = '';
+
+      if (results.length === 0) {
+        resultList.innerHTML = '<div class="empty">該当するページは見つかりませんでした。別の語句で検索してください。</div>';
+        return;
+      }
+
+      results.forEach((site) => {
+        const el = document.createElement('div');
+        el.className = 'result';
+        el.setAttribute('role', 'link');
+        el.setAttribute('tabindex', '0');
+        el.innerHTML = `
+          <div class="meta">${site.type}</div>
+          <div class="result-url">${site.url}</div>
+          <div class="result-title">${site.title}</div>
+          <div class="result-body">${site.description}</div>
+        `;
+        el.addEventListener('click', () => openSite(site));
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openSite(site);
+          }
+        });
+        resultList.appendChild(el);
+      });
+    }
+
+    function getVisitedSites() {
+      try {
+        const list = JSON.parse(localStorage.getItem(VISITED_KEY) || '[]');
+        return Array.isArray(list) ? list : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function recordVisitedSite(siteId) {
+      const list = getVisitedSites();
+      if (!list.includes(siteId)) {
+        list.push(siteId);
+        localStorage.setItem(VISITED_KEY, JSON.stringify(list));
+      }
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('active');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('active'), 1800);
+    }
+
+    function openSite(site) {
+      recordVisitedSite(site.id);
+      showToast('通過したURLを記録しました');
+      window.open(site.url, '_blank', 'noopener,noreferrer');
+    }
+
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = searchInput.value.trim();
+      if (!q) return;
+      renderResults(q);
+    });
+  </script>
+</body>
+</html>
